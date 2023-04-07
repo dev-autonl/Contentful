@@ -1,7 +1,8 @@
 {
+    "id": "json-list-editor",
     "name": "JSON List Editor",
+    "srcdoc": "./index.html",
     "fieldTypes": ["Object"],
-    "srcDoc": "./index.html",
     "parameters": {
         "instance": [
             {
