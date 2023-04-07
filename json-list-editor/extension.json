@@ -6,18 +6,25 @@
     "parameters": {
         "instance": [
             {
-                "id": "helpText",
+                "id": "listItemKeyTitle",
                 "type": "Symbol",
-                "name": "Help text",
-                "description": "Help text for a user to help them understand the editor"
+                "name": "List Item Key Title",
+                "description": "Title to use for the lefthand side key",
+                "default": "Key"
             },
             {
-                "id": "theme",
-                "type": "Enum",
-                "name": "Theme",
-                "options": [{"light": "Solarized light"}, {"dark": "Solarized dark"}],
-                "default": "light",
-                "required": true
+                "id": "listItemValueTitle",
+                "type": "Symbol",
+                "name": "List Item Value Title",
+                "description": "Title to use for the righthand side value",
+                "default": "Value"
+            },
+            {
+                "id": "listItemKeyUnique",
+                "type": "Boolean",
+                "name": "Unique List Item Keys",
+                "description": "Indicate if all list item keys should be unique",
+                "default": false
             }
         ]
     }

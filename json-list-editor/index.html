@@ -2,13 +2,13 @@
 <html>
 
 <head>
-    <title>CSP Editor</title>
+    <title>JSON List Editor</title>
     <script src="https://unpkg.com/contentful-ui-extensions-sdk@4"></script>
     <script src="https://kit.fontawesome.com/ce0f3486e3.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.25/rr-1.2.8/datatables.min.css" />
-    <script type="text/javascript"
-        src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.25/rr-1.2.8/datatables.min.js"></script>
+
+    <!-- DataTables Styling + jQuery 3 + DataTables + RowReorder -->
+    <link href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/rr-1.3.3/datatables.min.css" rel="stylesheet"/>
+    <script src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/rr-1.3.3/datatables.min.js"></script>
 </head>
 
 <body>
@@ -16,8 +16,8 @@
     <table id="dataTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>Domein</th>
-                <th>Status</th>
+                <th>Key</th>
+                <th>Value</th>
                 <th></th>
             </tr>
         </thead>
@@ -28,10 +28,10 @@
     <br />
 
     <button id="addItem">
-        <span style="color: green;">
+        <span style="color: #0AE29F;">
             <i class="fas fa-plus"></i>
         </span>
-        CSP toevoegen
+        Toevoegen
     </button>
 
     <script>
@@ -50,8 +50,12 @@
             dataTable = $('#dataTable').DataTable({
                 "data": dataSet,
                 "columns": [
-                    null,
-                    null,
+                    {
+                        "name": api.parameters.instance.listItemKeyTitle
+                    },
+                    {
+                        "name": api.parameters.instance.listItemValueTitle
+                    },
                     {
                         "width": "17%",
                         "defaultContent": ''
@@ -134,14 +138,16 @@
                 });
             }
 
-            // Check for duplicate CSP entries
-            if (new Set(dataSet.map(csp => csp.key)).size < dataSet.length) {
-                api.field.setInvalid(true);
+            // Check for duplicate entries
+            if (api.parameters.instance.listItemKeyUnique) {
+                if (new Set(dataSet.map(item => item.key)).size < dataSet.length) {
+                    api.field.setInvalid(true);
+                }
+                else {
+                    api.field.setInvalid(false);
+                }
             }
-            else {
-                api.field.setInvalid(false);
-            }
-            
+
             api.field.setValue(dataSet);
         }
     </script>
