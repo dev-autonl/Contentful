@@ -1,0 +1,23 @@
+{
+    "name": "JSON List Editor",
+    "fieldTypes": ["Object"],
+    "srcDoc": "./index.html",
+    "parameters": {
+        "instance": [
+            {
+                "id": "helpText",
+                "type": "Symbol",
+                "name": "Help text",
+                "description": "Help text for a user to help them understand the editor"
+            },
+            {
+                "id": "theme",
+                "type": "Enum",
+                "name": "Theme",
+                "options": [{"light": "Solarized light"}, {"dark": "Solarized dark"}],
+                "default": "light",
+                "required": true
+            }
+        ]
+    }
+}

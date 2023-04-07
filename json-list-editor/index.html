@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSP Editor</title>
+    <script src="https://unpkg.com/contentful-ui-extensions-sdk@4"></script>
+    <script src="https://kit.fontawesome.com/ce0f3486e3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.25/rr-1.2.8/datatables.min.css" />
+    <script type="text/javascript"
+        src="https://cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.25/rr-1.2.8/datatables.min.js"></script>
+</head>
+
+<body>
+
+    <table id="dataTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Domein</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <br />
+
+    <button id="addItem">
+        <span style="color: green;">
+            <i class="fas fa-plus"></i>
+        </span>
+        CSP toevoegen
+    </button>
+
+    <script>
+        var dataTable;
+
+        window.contentfulExtension.init(function (api) {
+            var dataSet = loadData(api);
+
+            $.extend(true, $.fn.dataTable.defaults, {
+                searching: false,
+                paging: false,
+                info: false,
+                ordering: false
+            });
+          
+            dataTable = $('#dataTable').DataTable({
+                "data": dataSet,
+                "columns": [
+                    null,
+                    null,
+                    {
+                        "width": "17%",
+                        "defaultContent": ''
+                    }
+                ],
+                "columnDefs": [
+                    {
+                        "render": function (data) {
+                            return "<input type='text' style='width:100%;' value='" + (typeof data === 'undefined' ? "" : data) + "'/>";
+                        },
+                        "targets": [0, 1]
+                    },
+                    {
+                        "render": function () {
+                            return "<button class='delItem'>" +
+                                "<span style='color: red;'>" +
+                                "<i class='fas fa-minus'></i>" +
+                                "</span></button>";
+                        },
+                        "targets": -1
+                    }
+                ]
+            });
+
+            $('#addItem').on('click', function () {
+                dataTable.row.add(['','']).draw(false);
+
+                api.window.updateHeight();
+
+                $('.delItem').off().on("click", function () {
+                    dataTable.row($(this).parents('tr')).remove().draw(false);
+                });
+            });
+
+            $('.delItem').off().on("click", function () {
+                dataTable.row($(this).parents('tr')).remove().draw(false);
+
+                api.window.updateHeight();
+            });
+
+            api.window.updateHeight();
+
+            window.addEventListener('blur', e => {
+                saveData(api);
+            }, true);
+        });
+
+        function loadData(api) {
+            var fieldValue = api.field.getValue();
+          
+            if (typeof fieldValue === 'undefined' || fieldValue === null) {
+                return [];
+            }
+
+            var dataSet = [];
+           
+            fieldValue.forEach(function(element) {
+                dataSet.push([element.key, element.value, ""]);
+            });
+           
+            return dataSet;
+        }
+
+        function saveData(api) {
+            if (! dataTable.data().count()) {
+                api.field.removeValue();
+                return;
+            }
+            
+            var dataSet = [];
+            
+            var table = document.getElementById("dataTable");
+            
+            for (var i = 1; i < table.rows.length; i++) {
+                var columnInputs = $("#dataTable tbody tr:nth-child(" + i + ") input").toArray();
+                
+                dataSet.push({ 
+                    key: columnInputs[0].value,
+                    value: columnInputs[1].value
+                });
+            }
+
+            // Check for duplicate CSP entries
+            if (new Set(dataSet.map(csp => csp.key)).size < dataSet.length) {
+                api.field.setInvalid(true);
+            }
+            else {
+                api.field.setInvalid(false);
+            }
+            
+            api.field.setValue(dataSet);
+        }
+    </script>
+
+</body>
+
+</html>
